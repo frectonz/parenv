@@ -5,6 +5,7 @@ edition = "2021"
 license = "MIT"
 description = "Macro implementation of #[derive(Environment)]"
 repository = "https://github.com/frectonz/parenv"
+readme = "../README.md"
 
 [lib]
 proc-macro = true
