@@ -2,6 +2,9 @@
 name = "parenv"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "Environment variable parser with a clap style derive macro and elm style error reporting."
+repository = "https://github.com/frectonz/parenv"
 
 [dependencies]
 miette = { version = "7.2.0", features = ["fancy"] }

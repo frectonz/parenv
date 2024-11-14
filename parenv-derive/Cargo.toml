@@ -2,6 +2,9 @@
 name = "parenv-derive"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "Macro implementation of #[derive(Environment)]"
+repository = "https://github.com/frectonz/parenv"
 
 [lib]
 proc-macro = true
