@@ -1,0 +1,9 @@
+[package]
+name = "parenv"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+miette = { version = "7.2.0", features = ["fancy"] }
+owo-colors = "4.1.0"
+parenv-derive = { version = "0.1.0", path = "../parenv-derive" }
