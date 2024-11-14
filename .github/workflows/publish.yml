@@ -11,17 +11,13 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-
     - name: Build
       run: cargo build --verbose
-
     - name: Publish `parenv-derive`
       run: cargo publish -p parenv-derive
-
     - name: Publish `parenv`
       run: cargo publish -p parenv
