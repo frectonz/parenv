@@ -150,7 +150,7 @@ checksum = "fb37767f6569cd834a413442455e0f066d0d522de8630436e2a1761d9726ba56"
 
 [[package]]
 name = "parenv"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "miette",
  "owo-colors",
@@ -159,7 +159,7 @@ dependencies = [
 
 [[package]]
 name = "parenv-derive"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "quote",
  "syn",

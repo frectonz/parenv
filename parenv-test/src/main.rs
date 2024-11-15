@@ -9,7 +9,7 @@ struct Env {
     /// The dog
     dog: SocketAddr,
     /// The file
-    file: Option<PathBuf>,
+    file: PathBuf,
 }
 
 fn main() {
