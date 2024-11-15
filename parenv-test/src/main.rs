@@ -5,11 +5,11 @@ use parenv::Environment;
 #[derive(Debug, Environment)]
 struct Env {
     /// The cat
-    cat: u8,
+    cat: Option<u8>,
     /// The dog
     dog: SocketAddr,
     /// The file
-    file: PathBuf,
+    file: Option<PathBuf>,
 }
 
 fn main() {
