@@ -37,10 +37,13 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
                 _ => None,
             })?;
 
-            Some(prefix)
+            Some(if prefix.is_empty() {
+                prefix
+            } else {
+                prefix[1..(prefix.len() - 1)].to_owned()
+            })
         })
         .unwrap_or_default();
-    let prefix = &prefix[1..(prefix.len() - 1)];
 
     let field_descs: Vec<_> = fields
         .named
