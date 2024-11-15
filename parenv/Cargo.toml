@@ -1,6 +1,6 @@
 [package]
 name = "parenv"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 license = "MIT"
 description = "Environment variable parser with a clap style derive macro and elm style error reporting."
@@ -10,4 +10,4 @@ readme = "../README.md"
 [dependencies]
 miette = { version = "7.2.0", features = ["fancy"] }
 owo-colors = "4.1.0"
-parenv-derive = { version = "0.1.2", path = "../parenv-derive" }
+parenv-derive = { version = "0.1.3", path = "../parenv-derive" }
