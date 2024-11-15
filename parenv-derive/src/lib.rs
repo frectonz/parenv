@@ -1,8 +1,9 @@
 use proc_macro::TokenStream;
+use proc_macro2::TokenTree;
 use quote::{format_ident, quote};
 use syn::{parse_macro_input, Data, DeriveInput, Fields};
 
-#[proc_macro_derive(Environment)]
+#[proc_macro_derive(Environment, attributes(parenv))]
 pub fn derive_environment(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
@@ -14,6 +15,33 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
         panic!("environment parser can only be derived on structs whose fields have names");
     };
 
+    let prefix = input
+        .attrs
+        .into_iter()
+        .find_map(|attr| match attr.meta {
+            syn::Meta::List(val) if val.path.is_ident("parenv") => Some(val.tokens),
+            _ => None,
+        })
+        .and_then(|expr| {
+            let mut tokens = expr.into_iter();
+            tokens.next().and_then(|t| match t {
+                TokenTree::Ident(ident) if ident.to_string() == "prefix" => Some(()),
+                _ => None,
+            })?;
+            tokens.next().and_then(|t| match t {
+                TokenTree::Punct(punct) if punct.as_char() == '=' => Some(()),
+                _ => None,
+            })?;
+            let prefix = tokens.next().and_then(|t| match t {
+                TokenTree::Literal(lit) => Some(lit.to_string()),
+                _ => None,
+            })?;
+
+            Some(prefix)
+        })
+        .unwrap_or_default();
+    let prefix = &prefix[1..(prefix.len() - 1)];
+
     let field_descs: Vec<_> = fields
         .named
         .iter()
@@ -22,6 +50,7 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
 
             let ident = field.ident.clone().unwrap();
             let ident_uppercase = ident.to_string().to_uppercase();
+            let ident_uppercase = format!("{prefix}{ident_uppercase}");
 
             let doc_comment = extract_doc_comment(field);
 
@@ -64,6 +93,7 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
             let is_option = subty_if_name(&field.ty, "Option");
 
             let ident_uppercase = ident.to_string().to_uppercase();
+            let ident_uppercase = format!("{prefix}{ident_uppercase}");
             let parse_ident = format_ident!("parse_{ident}");
 
             if let Some(inner_typ) = is_option {
