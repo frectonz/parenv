@@ -12,6 +12,7 @@ cargo add parenv
 
 The following demonstrates a simple usage example. `parenv` relies on the `FromStr` trait to parse environment variables into the specified type.
 The documentation comment on each field is used as the description for the corresponding environment variable.
+To make a field optional wrap the type with an `Option`.
 
 ```rust
 use std::{net::SocketAddr, path::PathBuf};
@@ -21,7 +22,7 @@ use parenv::Environment;
 #[derive(Debug, Environment)]
 struct Env {
     /// The cat
-    cat: u8,
+    cat: Option<u8>,
     /// The dog
     dog: SocketAddr,
     /// The file
@@ -36,4 +37,4 @@ fn main() {
 
 ## Demo
 
-[![asciicast](https://asciinema.org/a/689713.svg)](https://asciinema.org/a/689713)
+[![asciicast](https://asciinema.org/a/689791.svg)](https://asciinema.org/a/689791)
