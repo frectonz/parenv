@@ -1,5 +1,7 @@
 # `parenv`
 
+[![crates.io version](https://img.shields.io/crates/v/parenv.svg)](https://crates.io/crates/parenv) [![crates.io license](https://img.shields.io/crates/l/parenv.svg)](https://crates.io/crates/parenv) [![crates.io downloads](https://img.shields.io/crates/d/parenv.svg)](https://crates.io/crates/parenv) [![docs.rs documentation](https://img.shields.io/docsrs/parenv.svg)](https://docs.rs/parenv)
+
 Environment variable parser with a clap style derive macro and elm style error reporting.
 
 ## Installation
