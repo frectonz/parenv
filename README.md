@@ -18,6 +18,7 @@ Here are some important features you should know about.
 - The documentation comment on each field is used as the description for the corresponding environment variable.
 - To make a field optional, wrap the type with an `Option`.
 - To set a prefix value, set the attribute `#[parenv(prefix = "ENV_")]` on your struct.
+- To set a suffix value, set the attribute `#[parenv(suffix = "_ARG")]` on your struct.
 
 ```rust
 use std::{net::SocketAddr, path::PathBuf};
