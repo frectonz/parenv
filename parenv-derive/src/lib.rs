@@ -68,7 +68,7 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
             let is_option = subty_if_name(&field.ty, "Option");
 
             let ident_uppercase = ident.to_string().to_uppercase();
-            let ident_uppercase = format!("{prefix}{ident_uppercase}");
+            let ident_uppercase = format!("{prefix}{ident_uppercase}{suffix}");
             let parse_ident = format_ident!("parse_{ident}");
 
             if let Some(inner_typ) = is_option {
