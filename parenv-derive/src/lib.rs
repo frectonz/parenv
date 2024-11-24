@@ -15,35 +15,7 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
         panic!("environment parser can only be derived on structs whose fields have names");
     };
 
-    let prefix = input
-        .attrs
-        .into_iter()
-        .find_map(|attr| match attr.meta {
-            syn::Meta::List(val) if val.path.is_ident("parenv") => Some(val.tokens),
-            _ => None,
-        })
-        .and_then(|expr| {
-            let mut tokens = expr.into_iter();
-            tokens.next().and_then(|t| match t {
-                TokenTree::Ident(ident) if ident.to_string() == "prefix" => Some(()),
-                _ => None,
-            })?;
-            tokens.next().and_then(|t| match t {
-                TokenTree::Punct(punct) if punct.as_char() == '=' => Some(()),
-                _ => None,
-            })?;
-            let prefix = tokens.next().and_then(|t| match t {
-                TokenTree::Literal(lit) => Some(lit.to_string()),
-                _ => None,
-            })?;
-
-            Some(if prefix.is_empty() {
-                prefix
-            } else {
-                prefix[1..(prefix.len() - 1)].to_owned()
-            })
-        })
-        .unwrap_or_default();
+    let (prefix, suffix) = parenv_mata_values(&input.attrs);
 
     let field_descs: Vec<_> = fields
         .named
@@ -53,7 +25,7 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
 
             let ident = field.ident.clone().unwrap();
             let ident_uppercase = ident.to_string().to_uppercase();
-            let ident_uppercase = format!("{prefix}{ident_uppercase}");
+            let ident_uppercase = format!("{prefix}{ident_uppercase}{suffix}");
 
             let doc_comment = extract_doc_comment(field);
 
@@ -229,6 +201,62 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
     };
 
     TokenStream::from(expanded)
+}
+
+fn parenv_mata_values(attrs: &[syn::Attribute]) -> (String, String) {
+    attrs
+        .iter()
+        .find_map(|attr| match attr.meta {
+            syn::Meta::List(ref val) if val.path.is_ident("parenv") => {
+                let mut tokens = val.tokens.clone().into_iter();
+
+                let mut prefix = None;
+                let mut suffix = None;
+
+                for _ in 0..2 {
+                    let ident = tokens.next().and_then(|t| match t {
+                        TokenTree::Ident(ident) => Some(ident.to_string()),
+                        _ => None,
+                    })?;
+
+                    if ident == "prefix" {
+                        prefix = get_parenv_value(&mut tokens);
+                    }
+
+                    if ident == "suffix" {
+                        suffix = get_parenv_value(&mut tokens);
+                    }
+
+                    let _ = tokens.next().and_then(|t| match t {
+                        TokenTree::Punct(punct) if punct.as_char() == ',' => Some(()),
+                        _ => None,
+                    });
+                }
+
+                Some((prefix.unwrap_or_default(), suffix.unwrap_or_default()))
+            }
+            _ => None,
+        })
+        .unwrap_or((String::default(), String::default()))
+}
+
+/// Parses this structure
+/// = value
+fn get_parenv_value(tokens: &mut proc_macro2::token_stream::IntoIter) -> Option<String> {
+    tokens.next().and_then(|t| match t {
+        TokenTree::Punct(punct) if punct.as_char() == '=' => Some(()),
+        _ => None,
+    })?;
+    let value = tokens.next().and_then(|t| match t {
+        TokenTree::Literal(lit) => Some(lit.to_string()),
+        _ => None,
+    })?;
+
+    Some(if value.is_empty() {
+        value
+    } else {
+        value[1..(value.len() - 1)].to_owned()
+    })
 }
 
 fn extract_doc_comment(field: &syn::Field) -> String {
