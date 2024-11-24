@@ -43,4 +43,4 @@ fn main() {
 
 ## Demo
 
-[![asciicast](https://asciinema.org/a/689806.svg)](https://asciinema.org/a/689806)
+[![asciicast](https://asciinema.org/a/691817.svg)](https://asciinema.org/a/691817)
