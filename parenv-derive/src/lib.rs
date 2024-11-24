@@ -213,25 +213,50 @@ fn parenv_mata_values(attrs: &[syn::Attribute]) -> (String, String) {
                 let mut prefix = None;
                 let mut suffix = None;
 
-                for _ in 0..2 {
-                    let ident = tokens.next().and_then(|t| match t {
+                tokens
+                    .next()
+                    .and_then(|t| match t {
                         TokenTree::Ident(ident) => Some(ident.to_string()),
                         _ => None,
-                    })?;
+                    })
+                    .and_then(|ident| {
+                        if ident == "prefix" {
+                            prefix = get_parenv_value(&mut tokens);
+                        }
 
-                    if ident == "prefix" {
-                        prefix = get_parenv_value(&mut tokens);
-                    }
+                        if ident == "suffix" {
+                            suffix = get_parenv_value(&mut tokens);
+                        }
 
-                    if ident == "suffix" {
-                        suffix = get_parenv_value(&mut tokens);
-                    }
-
-                    let _ = tokens.next().and_then(|t| match t {
-                        TokenTree::Punct(punct) if punct.as_char() == ',' => Some(()),
-                        _ => None,
+                        Some(())
                     });
+
+                let found_comma = tokens.next().is_some_and(|t| match t {
+                    TokenTree::Punct(punct) => punct.as_char() == ',',
+                    _ => false,
+                });
+
+                if !found_comma {
+                    return Some((prefix.unwrap_or_default(), suffix.unwrap_or_default()));
                 }
+
+                tokens
+                    .next()
+                    .and_then(|t| match t {
+                        TokenTree::Ident(ident) => Some(ident.to_string()),
+                        _ => None,
+                    })
+                    .and_then(|ident| {
+                        if ident == "prefix" {
+                            prefix = get_parenv_value(&mut tokens);
+                        }
+
+                        if ident == "suffix" {
+                            suffix = get_parenv_value(&mut tokens);
+                        }
+
+                        Some(())
+                    });
 
                 Some((prefix.unwrap_or_default(), suffix.unwrap_or_default()))
             }
