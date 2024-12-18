@@ -9,10 +9,17 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
 
     let ident = input.ident;
     let Data::Struct(struct_data) = input.data else {
-        panic!("environment parser can only be derived on structs");
+        return syn::Error::new_spanned(ident, "environment parser can only be derived on structs")
+            .to_compile_error()
+            .into();
     };
     let Fields::Named(fields) = struct_data.fields else {
-        panic!("environment parser can only be derived on structs whose fields have names");
+        return syn::Error::new_spanned(
+            ident,
+            "environment parser can only be derived on structs whose fields have names",
+        )
+        .to_compile_error()
+        .into();
     };
 
     let (prefix, suffix) = parenv_mata_values(&input.attrs);
