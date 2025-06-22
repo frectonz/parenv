@@ -1,7 +1,7 @@
 [package]
 name = "parenv-test"
-version = "0.1.8"
+version = "0.1.9"
 edition = "2021"
 
 [dependencies]
-parenv = { version = "0.1.8", path = "../parenv" }
+parenv = { version = "0.1.9", path = "../parenv" }
