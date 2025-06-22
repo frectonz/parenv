@@ -153,7 +153,6 @@ name = "parenv"
 version = "0.1.7"
 dependencies = [
  "miette",
- "owo-colors",
  "parenv-derive",
 ]
 

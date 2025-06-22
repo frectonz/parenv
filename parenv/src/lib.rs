@@ -1,3 +1,2 @@
-pub use ::miette;
-pub use ::owo_colors;
-pub use ::parenv_derive::*;
+pub use miette;
+pub use parenv_derive::*;

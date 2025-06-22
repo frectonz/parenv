@@ -38,11 +38,11 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
 
             if is_option {
                 quote! {
-                    [#ident_uppercase.bold().to_string(), #doc_comment.bright_magenta().to_string(), "[optional]".dimmed().to_string()]
+                    [bold(#ident_uppercase), bright_magenta(#doc_comment), dimmed("[optional]")]
                 }
             } else {
                 quote! {
-                    [#ident_uppercase.bold().to_string(), #doc_comment.bright_magenta().to_string(), "".to_string()]
+                    [bold(#ident_uppercase), bright_magenta(#doc_comment), "".to_string()]
                 }
             }
         })
@@ -76,7 +76,7 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
 
             let ident_uppercase = ident.to_string().to_uppercase();
             let ident_uppercase = format!("{prefix}{ident_uppercase}{suffix}");
-            let parse_ident = format_ident!("parse_{ident}");
+            let parse_ident = format_ident!("parse_{}", ident);
 
             if let Some(inner_typ) = is_option {
                 quote! {
@@ -89,8 +89,8 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
                                     .wrap_err_with(||
                                         format!(
                                             "I couldn't parse the value '{}' provided by the environment variable {}.",
-                                            f.red().bold(),
-                                            #ident_uppercase.red().bold()
+                                            bold(&red(&f)),
+                                            bold(&red(#ident_uppercase))
                                         )
                                     )
                             })
@@ -119,7 +119,7 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
                             .wrap_err_with(||
                                 format!(
                                     "I couldn't find the environment variable {}.",
-                                    #ident_uppercase.red().bold()
+                                    bold(&red(#ident_uppercase))
                                 )
                             )?;
                         let #ident: #ident_typ = #ident.parse()
@@ -127,8 +127,8 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
                             .wrap_err_with(||
                                 format!(
                                     "I couldn't parse the value '{}' provided by the environment variable {}.",
-                                    #ident.red().bold(),
-                                    #ident_uppercase.red().bold()
+                                    bold(&red(&#ident)),
+                                    bold(&red(#ident_uppercase))
                                 )
                             )?;
                         Ok(#ident)
@@ -153,7 +153,22 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
         impl #ident {
             fn parse() -> Self {
                 use ::parenv::miette::{IntoDiagnostic, WrapErr};
-                use ::parenv::owo_colors::OwoColorize;
+
+                fn bold(s: &str) -> String {
+                    format!("\x1b[1m{}\x1b[0m", s)
+                }
+                fn dimmed(s: &str) -> String {
+                    format!("\x1b[2m{}\x1b[0m", s)
+                }
+                fn red(s: &str) -> String {
+                    format!("\x1b[31m{}\x1b[0m", s)
+                }
+                fn green(s: &str) -> String {
+                    format!("\x1b[32m{}\x1b[0m", s)
+                }
+                fn bright_magenta(s: &str) -> String {
+                    format!("\x1b[95m{}\x1b[0m", s)
+                }
 
                 let mut errors: [
                     ::std::option::Option<::parenv::miette::Report>;
@@ -164,7 +179,7 @@ pub fn derive_environment(input: TokenStream) -> TokenStream {
 
                 let there_is_a_some = errors.iter().any(|e| e.is_some());
                 if there_is_a_some {
-                    let crate_name = ::std::env!("CARGO_PKG_NAME").green();
+                    let crate_name = green(::std::env!("CARGO_PKG_NAME"));
 
                     ::std::println!("I, {crate_name}, expect the following environment variables.\n");
 

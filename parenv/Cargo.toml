@@ -9,5 +9,4 @@ readme = "../README.md"
 
 [dependencies]
 miette = { version = "7.2.0", features = ["fancy"] }
-owo-colors = "4.1.0"
 parenv-derive = { version = "0.1.6", path = "../parenv-derive" }
