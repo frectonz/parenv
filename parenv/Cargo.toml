@@ -1,6 +1,6 @@
 [package]
 name = "parenv"
-version = "0.1.7"
+version = "0.1.8"
 edition = "2021"
 license = "MIT"
 description = "Environment variable parser with a clap style derive macro and elm style error reporting."
